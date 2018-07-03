@@ -1,9 +1,18 @@
 pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
+
+
+world={
+	max_x=128,
+	max_y=128
+}
+
 ship={
-	x=64,
-	y=64,
+	x=56.5,
+	y=96,
+	w=15,
+	h=12,
 	dx=2,
 	dy=2,
 	tilt_l=false,
@@ -14,28 +23,43 @@ ship={
 		if(btn(0)) then
 			self.x-=self.dx
 			self.tilt_l=true
+			if (self.x < 0) then
+				self.x = 0
+			end
 		end
 
 		if(btn(1)) then
 			self.x+=self.dx
 			self.tilt_r=true
+			if (self.x + self.w > world.max_x) then
+				self.x = world.max_x - self.w
+			end
 		end
 
 		if(btn(2)) then
 			self.y-=self.dy
+			if (self.y < 0) then
+				self.y = 0
+			end
 		end
 
 		if(btn(3)) then
 			self.y+=self.dy
+			if (self.y + self.h > world.max_y) then
+				self.y = world.max_y - self.h
+			end
 		end
 	end,
 	draw=function(self)
 		if(self.tilt_l==true) then
-			spr(9,self.x,self.y,2,2,true)
+			-- spr(9,self.x,self.y,2,2,true)
+			sspr(9*8,4,self.w,self.h,self.x,self.y,self.w,self.h,true)
 		elseif(self.tilt_r==true) then
-			spr(9,self.x,self.y,2,2)
+			-- spr(9,self.x,self.y,2,2)
+			sspr(9*8,4,self.w,self.h,self.x,self.y)
 		else
-			spr(7,self.x,self.y,2,2)
+			-- spr(7,self.x,self.y,2,2)
+			sspr(7*8,4,self.w,self.h,self.x,self.y)
 		end
 	end
 }
@@ -50,7 +74,7 @@ end
 
 function _draw()
 	cls()
-	rectfill(0,0,127,127,1)
+	rectfill(0,0,world.max_x,world.max_y,1)
 	ship:draw()
 end
 
